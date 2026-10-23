@@ -1,0 +1,41 @@
+# YOLOv8 Training Configuration for RTX 3050 4GB
+
+model:
+  # Using YOLOv8s for better accuracy while fitting in 4GB VRAM.
+  # It provides a great balance between speed, mAP, and memory footprint.
+  name: "yolov8s.pt" 
+  
+dataset:
+  # Update this path to where your dataset yaml is located
+  yaml_path: "Aksara-Ulu-Rejang-4/data.yaml"
+
+training:
+  epochs: 100
+  imgsz: 640
+  # Batch size 8 is safe for 4GB VRAM with FP16 and imgsz 640. 
+  # If it OOMs, reduce to 4.
+  batch_size: 8 
+  patience: 30
+  device: "cpu" # Use 0 for GPU if torch with CUDA is installed
+  workers: 4 # Reduced workers for typical desktop environment to avoid memory overhead
+  amp: True # Mixed precision FP16 (improves speed and lowers VRAM)
+  cos_lr: True # Cosine learning rate scheduler
+  optimizer: "AdamW" # Modern optimizer good for small datasets/fine-tuning
+  lr0: 0.001
+  cache: False # Set to True if RAM > 16GB allows, but False is safer
+
+augmentations:
+  # Advanced augmentations to improve robustness, especially for handwritten characters
+  hsv_h: 0.015
+  hsv_s: 0.7
+  hsv_v: 0.4
+  degrees: 15.0 # Rotation is critical for handwritten text variations
+  translate: 0.1
+  scale: 0.5
+  shear: 2.0 # Slight shear for italic-like handwriting
+  perspective: 0.0001 # Random perspective
+  flipud: 0.0 # Don't flip up-down for characters (changes meaning)
+  fliplr: 0.0 # Don't flip left-right for characters (changes meaning)
+  mosaic: 1.0 # Mosaic is great for object detection robustness
+  mixup: 0.1
+  erasing: 0.4 # Random erasing to handle occlusions and noisy backgrounds

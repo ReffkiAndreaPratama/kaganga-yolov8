@@ -1,0 +1,36 @@
+# Dataset (terlalu besar untuk GitHub)
+Aksara Ulu Rejang.v4-fix.yolov8/
+Aksara Ulu Rejang.v4-fix.multiclass/
+Aksara Ulu Rejang.v4-fix.tensorflow/
+Aksara Ulu Rejang.v4-fix.openai/
+dataset/
+
+# Model last (checkpoint, tidak perlu di repo)
+models/last.pt
+
+# Training runs output
+runs/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+venv/
+venv311/
+*.egg-info/
+
+# Logs (generated at runtime)
+logs/
+
+# Results (generated from training)
+results/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/

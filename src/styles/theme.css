@@ -1,0 +1,664 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   AksaraDetect — Premium Design System
+   Inspired by Stripe, Linear, and Notion
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+/* ─── Design Tokens ──────────────────────────────────────────────────────── */
+:root {
+  /* Surfaces — neutral, slightly cool dark */
+  --bg-base:        #0A0A0F;
+  --bg-surface:     #0F0F16;
+  --bg-elevated:    #14141C;
+  --bg-overlay:     #1A1A24;
+  --bg-hover:       #1E1E2A;
+
+  /* Borders */
+  --border-subtle:  rgba(255, 255, 255, 0.04);
+  --border-default: rgba(255, 255, 255, 0.06);
+  --border-strong:  rgba(255, 255, 255, 0.10);
+  --border-focus:   rgba(124, 92, 255, 0.40);
+
+  /* Text */
+  --text-primary:    #FAFAFA;
+  --text-secondary:  #B4B4C2;
+  --text-tertiary:   #7A7A8C;
+  --text-quaternary: #4F4F60;
+  --text-disabled:   #2F2F3A;
+
+  /* Brand & accents */
+  --brand:           #7C5CFF;
+  --brand-hover:     #8B6DFF;
+  --brand-pressed:   #6B4DFF;
+  --brand-soft:      rgba(124, 92, 255, 0.10);
+  --brand-border:    rgba(124, 92, 255, 0.20);
+  --brand-glow:      rgba(124, 92, 255, 0.35);
+
+  --teal:    #00D4C8;
+  --pink:    #FF6B9D;
+  --amber:   #FFB547;
+  --green:   #34D399;
+  --red:     #F87171;
+  --blue:    #60A5FA;
+
+  /* Gradient */
+  --gradient-brand: linear-gradient(135deg, #7C5CFF 0%, #5CC4FF 100%);
+  --gradient-text:  linear-gradient(135deg, #FAFAFA 0%, #A0A0B0 100%);
+
+  /* Shadows */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.20);
+  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.30);
+  --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.40);
+  --shadow-glow: 0 0 0 1px var(--border-focus), 0 8px 32px var(--brand-glow);
+
+  /* Radii */
+  --r-xs: 4px;
+  --r-sm: 6px;
+  --r-md: 8px;
+  --r-lg: 12px;
+  --r-xl: 16px;
+  --r-2xl: 20px;
+
+  /* Motion */
+  --ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --duration-fast: 120ms;
+  --duration-base: 200ms;
+  --duration-slow: 320ms;
+}
+
+/* ─── Reset & Base ───────────────────────────────────────────────────────── */
+* { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+
+.stApp {
+  background: var(--bg-base) !important;
+  color: var(--text-primary);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+}
+
+/* Background ambient lighting */
+.stApp::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(124, 92, 255, 0.08), transparent 60%),
+    radial-gradient(ellipse 60% 40% at 100% 100%, rgba(0, 212, 200, 0.04), transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ─── Scrollbar ──────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 8px;
+  border: 2px solid var(--bg-base);
+}
+::-webkit-scrollbar-thumb:hover { background: var(--text-quaternary); }
+
+/* ─── Hide Streamlit chrome — minimal & safe ────────────────────────────── */
+[data-testid="stSidebarNav"]      { display: none !important; }
+#MainMenu                         { visibility: hidden !important; }
+footer                            { visibility: hidden !important; }
+[data-testid="stDecoration"]      { display: none !important; }
+
+/* Hide ONLY Deploy button + status widget, keep sidebar toggle visible */
+[data-testid="stToolbarActions"]  { display: none !important; }
+[data-testid="stStatusWidget"]    { display: none !important; }
+
+/* Header — transparent but keep layout/visibility intact */
+header[data-testid="stHeader"]    {
+  background: transparent !important;
+}
+
+/* Restyle the floating collapsed-sidebar control so it matches our theme */
+[data-testid="collapsedControl"],
+[data-testid="stSidebarCollapsedControl"] {
+  background: var(--bg-elevated) !important;
+  border: 1px solid var(--border-strong) !important;
+  border-radius: var(--r-md) !important;
+  color: var(--text-secondary) !important;
+  box-shadow: var(--shadow-sm) !important;
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+[data-testid="collapsedControl"] svg,
+[data-testid="stSidebarCollapsedControl"] svg {
+  color: var(--text-secondary) !important;
+  fill: var(--text-secondary) !important;
+}
+[data-testid="collapsedControl"]:hover,
+[data-testid="stSidebarCollapsedControl"]:hover {
+  background: var(--bg-hover) !important;
+  border-color: var(--brand-border) !important;
+  color: var(--text-primary) !important;
+}
+
+/* ─── Sidebar ────────────────────────────────────────────────────────────── */
+[data-testid="stSidebar"] {
+  background: var(--bg-surface) !important;
+  border-right: 1px solid var(--border-default) !important;
+}
+
+/* NUCLEAR: zero out top padding on every sidebar wrapper Streamlit ships */
+[data-testid="stSidebar"] > div,
+[data-testid="stSidebar"] > div > div,
+[data-testid="stSidebar"] > div > div > div,
+[data-testid="stSidebar"] [data-testid="stSidebarContent"],
+[data-testid="stSidebar"] [data-testid="stSidebarUserContent"],
+[data-testid="stSidebar"] section,
+[data-testid="stSidebar"] section > div,
+[data-testid="stSidebar"] .block-container,
+[data-testid="stSidebar"] .stMainBlockContainer,
+[data-testid="stSidebar"] [class*="block-container"] {
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+}
+
+[data-testid="stSidebar"] .block-container {
+  padding-bottom: 16px !important;
+}
+
+/* Sidebar header (where the toggle button lives) — keep button visible
+   but collapse spacing so the gap below it disappears */
+[data-testid="stSidebar"] [data-testid="stSidebarHeader"] {
+  padding: 4px 8px !important;
+  min-height: 0 !important;
+  height: auto !important;
+}
+
+/* Sidebar nav (radio styled as menu) */
+[data-testid="stSidebar"] .stRadio > div { gap: 2px !important; }
+[data-testid="stSidebar"] .stRadio label {
+  padding: 8px 12px !important;
+  border-radius: var(--r-md) !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  color: var(--text-secondary) !important;
+  transition: all var(--duration-fast) var(--ease-out) !important;
+  border: 1px solid transparent !important;
+  margin: 0 8px !important;
+  cursor: pointer !important;
+}
+[data-testid="stSidebar"] .stRadio label:hover {
+  background: var(--bg-hover) !important;
+  color: var(--text-primary) !important;
+}
+[data-testid="stSidebar"] .stRadio label[data-checked="true"],
+[data-testid="stSidebar"] .stRadio label:has(input:checked) {
+  background: var(--brand-soft) !important;
+  border-color: var(--brand-border) !important;
+  color: var(--text-primary) !important;
+  box-shadow: inset 0 0 0 1px var(--brand-border);
+}
+
+/* Hide radio bullet/circle in sidebar — only show label text */
+[data-testid="stSidebar"] .stRadio [role="radio"],
+[data-testid="stSidebar"] .stRadio [data-testid="stMarkdownContainer"] > p {
+  display: inline !important;
+}
+[data-testid="stSidebar"] .stRadio label > div:first-child:not([data-testid="stMarkdownContainer"]) {
+  display: none !important;
+}
+[data-testid="stSidebar"] .stRadio label > div[data-baseweb="radio"] {
+  display: none !important;
+}
+[data-testid="stSidebar"] .stRadio input[type="radio"] {
+  display: none !important;
+}
+
+/* ─── Main container ─────────────────────────────────────────────────────── */
+.main .block-container {
+  padding: 0 48px 64px !important;
+  max-width: 1280px !important;
+  position: relative;
+  z-index: 1;
+}
+
+/* Hard-pull content to top — neutralize Streamlit's reserved header space */
+section[data-testid="stMain"] > div:first-child,
+[data-testid="stAppViewContainer"] > section:first-of-type > div:first-child,
+[data-testid="stAppViewBlockContainer"] {
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+}
+.main > div { padding-top: 0 !important; }
+.stMainBlockContainer { padding-top: 16px !important; }
+
+/* Compact the very first element's top margin */
+.main .block-container > div:first-child > div:first-child > div:first-child {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+@media (max-width: 768px) {
+  .main .block-container { padding: 0 20px 48px !important; }
+}
+
+/* ─── Typography ─────────────────────────────────────────────────────────── */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Inter', sans-serif !important;
+  color: var(--text-primary) !important;
+  letter-spacing: -0.02em !important;
+  font-weight: 600 !important;
+}
+h1 { font-size: 30px !important; line-height: 1.2 !important; }
+h2 { font-size: 22px !important; line-height: 1.3 !important; }
+h3 { font-size: 17px !important; line-height: 1.4 !important; }
+p, li, label { color: var(--text-secondary); }
+
+code {
+  font-family: 'JetBrains Mono', ui-monospace, monospace !important;
+  background: var(--bg-elevated) !important;
+  border: 1px solid var(--border-subtle) !important;
+  padding: 2px 6px !important;
+  border-radius: var(--r-xs) !important;
+  font-size: 12.5px !important;
+  color: var(--brand) !important;
+}
+
+/* Markdown */
+.stMarkdown { color: var(--text-secondary); }
+
+/* ─── Buttons ────────────────────────────────────────────────────────────── */
+.stButton > button {
+  background: var(--brand) !important;
+  color: #FFFFFF !important;
+  border: 1px solid transparent !important;
+  border-radius: var(--r-md) !important;
+  padding: 9px 16px !important;
+  font-weight: 600 !important;
+  font-size: 13px !important;
+  letter-spacing: -0.01em !important;
+  transition: all var(--duration-fast) var(--ease-out) !important;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.10) inset, 0 1px 2px rgba(0, 0, 0, 0.30) !important;
+  height: auto !important;
+  line-height: 1.2 !important;
+}
+.stButton > button:hover {
+  background: var(--brand-hover) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.10) inset, 0 4px 12px var(--brand-glow) !important;
+}
+.stButton > button:active {
+  background: var(--brand-pressed) !important;
+  transform: translateY(0) !important;
+}
+.stButton > button:focus-visible {
+  outline: 2px solid var(--border-focus) !important;
+  outline-offset: 2px !important;
+}
+
+/* Secondary button */
+.stButton > button[kind="secondary"],
+.stDownloadButton > button {
+  background: var(--bg-elevated) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-strong) !important;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset !important;
+}
+.stButton > button[kind="secondary"]:hover,
+.stDownloadButton > button:hover {
+  background: var(--bg-hover) !important;
+  border-color: var(--text-quaternary) !important;
+  transform: translateY(-1px) !important;
+}
+
+/* ─── Inputs ─────────────────────────────────────────────────────────────── */
+[data-testid="stFileUploader"] {
+  border: 1.5px dashed var(--border-strong) !important;
+  border-radius: var(--r-lg) !important;
+  padding: 32px 24px !important;
+  background: var(--bg-surface) !important;
+  transition: all var(--duration-base) var(--ease-out) !important;
+}
+[data-testid="stFileUploader"]:hover {
+  border-color: var(--border-focus) !important;
+  background: var(--brand-soft) !important;
+}
+[data-testid="stFileUploaderDropzone"] {
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+}
+[data-testid="stFileUploader"] section button {
+  background: var(--bg-elevated) !important;
+  border: 1px solid var(--border-strong) !important;
+  color: var(--text-primary) !important;
+  border-radius: var(--r-md) !important;
+}
+
+/* Sliders */
+.stSlider [data-baseweb="slider"] [role="slider"] {
+  background: #FFFFFF !important;
+  border: 0 !important;
+  width: 14px !important;
+  height: 14px !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.40), 0 0 0 1px var(--brand) !important;
+}
+.stSlider [data-baseweb="slider"] > div > div {
+  background: var(--brand) !important;
+  height: 4px !important;
+}
+.stSlider [data-baseweb="slider"] > div {
+  background: var(--bg-elevated) !important;
+  height: 4px !important;
+  border-radius: 4px !important;
+}
+
+/* Select / Number / Text inputs */
+[data-baseweb="select"] > div,
+.stNumberInput > div > div > input,
+.stTextInput > div > div > input,
+.stTextArea textarea {
+  background: var(--bg-elevated) !important;
+  border: 1px solid var(--border-strong) !important;
+  border-radius: var(--r-md) !important;
+  color: var(--text-primary) !important;
+  font-size: 13px !important;
+  transition: border-color var(--duration-fast) var(--ease-out) !important;
+}
+[data-baseweb="select"] > div:hover,
+.stNumberInput > div > div > input:hover,
+.stTextInput > div > div > input:hover {
+  border-color: var(--text-quaternary) !important;
+}
+[data-baseweb="select"] > div:focus-within,
+.stNumberInput > div > div > input:focus,
+.stTextInput > div > div > input:focus {
+  border-color: var(--brand) !important;
+  box-shadow: 0 0 0 3px var(--brand-soft) !important;
+}
+
+/* Labels */
+.stTextInput label, .stNumberInput label, .stSelectbox label,
+.stSlider label, .stFileUploader label, .stRadio label, .stCheckbox label {
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  color: var(--text-secondary) !important;
+  letter-spacing: -0.005em !important;
+}
+
+/* ─── Expander ───────────────────────────────────────────────────────────── */
+[data-testid="stExpander"] {
+  background: var(--bg-surface) !important;
+  border: 1px solid var(--border-default) !important;
+  border-radius: var(--r-lg) !important;
+  overflow: hidden !important;
+}
+[data-testid="stExpander"] summary,
+.streamlit-expanderHeader {
+  background: transparent !important;
+  border: none !important;
+  font-weight: 500 !important;
+  font-size: 13px !important;
+  color: var(--text-primary) !important;
+  padding: 12px 16px !important;
+}
+[data-testid="stExpander"] summary:hover { background: var(--bg-hover) !important; }
+
+/* ─── Tabs ───────────────────────────────────────────────────────────────── */
+.stTabs [data-baseweb="tab-list"] {
+  gap: 2px !important;
+  background: var(--bg-surface) !important;
+  border-radius: var(--r-md) !important;
+  padding: 4px !important;
+  border: 1px solid var(--border-default) !important;
+  display: inline-flex !important;
+}
+.stTabs [data-baseweb="tab"] {
+  border-radius: var(--r-sm) !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  padding: 7px 14px !important;
+  color: var(--text-tertiary) !important;
+  border: none !important;
+  background: transparent !important;
+  transition: all var(--duration-fast) var(--ease-out) !important;
+}
+.stTabs [data-baseweb="tab"]:hover { color: var(--text-secondary) !important; }
+.stTabs [aria-selected="true"] {
+  background: var(--bg-elevated) !important;
+  color: var(--text-primary) !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.20), 0 0 0 1px var(--border-strong) !important;
+}
+.stTabs [data-baseweb="tab-highlight"] { background: transparent !important; }
+.stTabs [data-baseweb="tab-border"] { display: none !important; }
+
+/* ─── DataFrame / Table ──────────────────────────────────────────────────── */
+[data-testid="stDataFrame"] {
+  border: 1px solid var(--border-default) !important;
+  border-radius: var(--r-lg) !important;
+  overflow: hidden !important;
+}
+
+/* ─── Alerts ─────────────────────────────────────────────────────────────── */
+.stAlert, [data-testid="stAlert"] {
+  border-radius: var(--r-lg) !important;
+  border: 1px solid var(--border-default) !important;
+  background: var(--bg-surface) !important;
+  font-size: 13px !important;
+}
+
+/* ─── Progress ───────────────────────────────────────────────────────────── */
+.stProgress > div > div { background: var(--bg-elevated) !important; height: 4px !important; }
+.stProgress > div > div > div {
+  background: var(--gradient-brand) !important;
+  border-radius: 4px !important;
+  transition: width var(--duration-base) var(--ease-out) !important;
+}
+
+/* ─── Spinner ────────────────────────────────────────────────────────────── */
+.stSpinner > div > div { border-top-color: var(--brand) !important; }
+
+/* ─── Radio ──────────────────────────────────────────────────────────────── */
+.stRadio > div[role="radiogroup"] { gap: 4px !important; }
+
+/* ─── Animations ─────────────────────────────────────────────────────────── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.5; }
+}
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.main .block-container > div { animation: fadeInUp var(--duration-slow) var(--ease-out); }
+
+/* ─── Image render ───────────────────────────────────────────────────────── */
+[data-testid="stImage"] img {
+  border-radius: var(--r-lg);
+  border: 1px solid var(--border-default);
+}
+
+/* Caption */
+[data-testid="stCaptionContainer"] p,
+[data-testid="caption"] {
+  color: var(--text-tertiary) !important;
+  font-size: 12px !important;
+}
+
+/* Selectbox dropdown menu */
+[data-baseweb="popover"] [data-baseweb="menu"] {
+  background: var(--bg-overlay) !important;
+  border: 1px solid var(--border-strong) !important;
+  border-radius: var(--r-md) !important;
+  box-shadow: var(--shadow-lg) !important;
+}
+[data-baseweb="menu"] li { color: var(--text-secondary) !important; font-size: 13px !important; }
+[data-baseweb="menu"] li:hover { background: var(--bg-hover) !important; color: var(--text-primary) !important; }
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Loading & Animations
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ─── App-load splash (subtle vignette on first paint) ────────────────── */
+@keyframes splashFade {
+  0%   { opacity: 1; }
+  70%  { opacity: 1; }
+  100% { opacity: 0; visibility: hidden; }
+}
+
+/* ─── Top progress bar while Streamlit re-runs ────────────────────────── */
+[data-testid="stStatusWidget"] { display: none !important; }
+
+/* Custom thin top progress bar (uses Streamlit's built-in spinner state) */
+.stApp > .stAppHeader::after,
+header[data-testid="stHeader"]::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--brand) 30%,
+    #5CC4FF 60%,
+    transparent 100%
+  );
+  background-size: 50% 100%;
+  background-repeat: no-repeat;
+  animation: topbar 1.4s linear infinite;
+  opacity: 0;
+  transition: opacity 200ms;
+  pointer-events: none;
+}
+.stApp[data-test-script-state="running"] > .stAppHeader::after,
+.stApp[data-test-script-state="running"] header[data-testid="stHeader"]::after {
+  opacity: 1;
+}
+@keyframes topbar {
+  0%   { background-position: -50% 0; }
+  100% { background-position: 150% 0; }
+}
+
+/* ─── Spinner — premium replacement for Streamlit default ─────────────── */
+.stSpinner {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 24px !important;
+}
+.stSpinner > div {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 14px !important;
+}
+.stSpinner > div > div {
+  width: 32px !important;
+  height: 32px !important;
+  border: 2px solid var(--bg-elevated) !important;
+  border-top-color: var(--brand) !important;
+  border-right-color: var(--brand) !important;
+  border-radius: 50% !important;
+  animation: spin 720ms linear infinite !important;
+  filter: drop-shadow(0 0 8px var(--brand-glow));
+}
+.stSpinner > div > div + * {
+  font-size: 12.5px !important;
+  font-weight: 500 !important;
+  color: var(--text-tertiary) !important;
+  letter-spacing: -0.005em !important;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ─── Pulse loader skeleton ───────────────────────────────────────────── */
+.ds-skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--bg-surface) 0%,
+    var(--bg-elevated) 50%,
+    var(--bg-surface) 100%
+  );
+  background-size: 200% 100%;
+  border-radius: var(--r-md);
+  animation: skeleton 1.4s ease-in-out infinite;
+}
+@keyframes skeleton {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ─── Progress bar polish ─────────────────────────────────────────────── */
+.stProgress > div > div > div {
+  background: linear-gradient(
+    90deg,
+    var(--brand) 0%,
+    #5CC4FF 50%,
+    #00D4C8 100%
+  ) !important;
+  background-size: 200% 100% !important;
+  animation: progressShine 2s linear infinite !important;
+}
+@keyframes progressShine {
+  0%   { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
+
+/* ─── Page entrance — subtle staggered fade-up ────────────────────────── */
+.main .block-container > div > div > div {
+  animation: fadeInUp 360ms var(--ease-out) backwards;
+}
+.main .block-container > div > div > div:nth-child(2)  { animation-delay: 40ms; }
+.main .block-container > div > div > div:nth-child(3)  { animation-delay: 80ms; }
+.main .block-container > div > div > div:nth-child(4)  { animation-delay: 120ms; }
+.main .block-container > div > div > div:nth-child(5)  { animation-delay: 160ms; }
+.main .block-container > div > div > div:nth-child(6)  { animation-delay: 200ms; }
+
+/* ─── Skeleton helpers (you can use these via st.markdown if needed) ──── */
+.ds-skeleton-line { height: 14px; margin-bottom: 8px; }
+.ds-skeleton-card { height: 96px; margin-bottom: 12px; }
+.ds-skeleton-pill { height: 24px; width: 96px; border-radius: 100px; }
+
+/* Logo mark pulse on hover */
+.ds-logo-mark { transition: transform var(--duration-base) var(--ease-out); }
+.ds-logo:hover .ds-logo-mark {
+  transform: scale(1.05) rotate(-4deg);
+}
+
+/* Hero gradient text — shimmer on first paint */
+.ds-hero-title .ds-gradient {
+  background-size: 200% 200%;
+  animation: gradientShift 6s ease-in-out infinite;
+}
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50%      { background-position: 100% 50%; }
+}
+
+/* Stat card hover glow */
+.ds-stat:hover {
+  box-shadow:
+    0 0 0 1px var(--accent-color, var(--brand)),
+    0 8px 24px rgba(0, 0, 0, 0.30),
+    0 0 32px var(--accent-soft, var(--brand-soft));
+}
+
+/* Status dot pulse */
+.ds-status-dot-green {
+  animation: statusPulse 2.4s ease-in-out infinite;
+}
+@keyframes statusPulse {
+  0%, 100% { box-shadow: 0 0 6px var(--green); }
+  50%      { box-shadow: 0 0 12px var(--green), 0 0 20px var(--green); }
+}

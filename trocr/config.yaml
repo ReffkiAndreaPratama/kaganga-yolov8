@@ -1,0 +1,32 @@
+# TrOCR Training Configuration for RTX 3050 4GB
+
+model:
+  # 'microsoft/trocr-small-handwritten' (~62M parameters) is the ideal model for 4GB VRAM.
+  # The base model (~334M parameters) is too heavy and will likely cause Out Of Memory (OOM) errors.
+  name: "microsoft/trocr-small-handwritten" 
+  max_length: 32 # Maximum character length for a single word/image
+
+dataset:
+  train_dir: "../dataset/train"
+  val_dir: "../dataset/val"
+  test_dir: "../dataset/test"
+
+training:
+  epochs: 50
+  batch_size: 8 # Safe batch size for 4GB VRAM. Reduce to 4 if OOM occurs.
+  eval_batch_size: 8
+  learning_rate: 5.0e-5
+  weight_decay: 0.01
+  fp16: True # Mixed precision for faster training and lower VRAM usage
+  gradient_accumulation_steps: 4 # Effectively acts as batch size 32 (8 * 4) to improve gradient stability
+  patience: 10 # Early stopping patience
+  save_dir: "models/checkpoints"
+  logging_steps: 50
+  
+augmentations:
+  # Using Albumentations for complex computer vision augmentations
+  rotation_limit: 15
+  blur_limit: 3
+  brightness_contrast_p: 0.5
+  perspective_p: 0.2
+  noise_p: 0.2
